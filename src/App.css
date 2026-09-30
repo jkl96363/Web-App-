@@ -1,0 +1,437 @@
+/* =========================================================
+   第 3 步：基本 CSS
+   目標：清楚的區塊、易辨識的按鈕與輸入欄位、任務清單有視覺層次
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+/* ---------- 1. 設計變數（顏色、間距、圓角集中管理） ---------- */
+:root {
+  --color-bg: #edf0f4;        /* 頁面背景：淡灰藍 */
+  --color-surface: #ffffff;   /* 區塊底色 */
+  --color-ink: #1b2430;       /* 主要文字 */
+  --color-muted: #6b7785;     /* 次要文字 */
+  --color-line: #d5dbe3;      /* 邊框 */
+  --color-primary: #0e6b66;   /* 主色：深青綠，用在主要按鈕與未完成任務 */
+  --color-primary-dark: #0a524e;
+  --color-primary-soft: #e3f1f0;
+  --color-danger: #c2372d;    /* 刪除 */
+  --color-danger-soft: #fbeceb;
+  --color-done-bg: #f4f6f8;   /* 已完成任務底色 */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+}
+
+/* ---------- 2. 基礎設定 ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", system-ui, -apple-system, "Microsoft JhengHei", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-ink);
+  background: var(--color-bg);
+}
+
+/* ---------- 3. 整體版面 ---------- */
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+}
+
+.app-header {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 3px solid var(--color-primary);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ---------- 4. 新增任務區塊 ---------- */
+.task-form-section {
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.task-form {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.task-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  font: inherit;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.task-input::placeholder {
+  color: var(--color-muted);
+}
+
+.task-input:hover {
+  border-color: #b3bdc9;
+}
+
+/* 輸入中：邊框變主色並加外光暈，清楚知道游標在哪 */
+.task-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+/* ---------- 5. 按鈕共用樣式 ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  border-color: #b3bdc9;
+  background: #f7f9fb;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+/* 用鍵盤 Tab 移動時，顯示清楚的外框 */
+.btn:focus-visible,
+.task-checkbox:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 主要按鈕：新增（實心主色，頁面上最顯眼的按鈕） */
+.btn-add {
+  color: #fff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  font-weight: 700;
+}
+
+.btn-add:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+/* ---------- 6. 篩選區塊（分段按鈕） ---------- */
+.filter-group {
+  display: inline-flex;
+  padding: var(--space-xs);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  gap: var(--space-xs);
+}
+
+.btn-filter {
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-muted);
+}
+
+.btn-filter:hover {
+  background: var(--color-bg);
+  border-color: transparent;
+  color: var(--color-ink);
+}
+
+/* 目前選中的篩選 */
+.btn-filter.active,
+.btn-filter[aria-pressed="true"] {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  font-weight: 700;
+}
+
+/* ---------- 7. 統計區塊 ---------- */
+.stats-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  padding: 0 var(--space-xs);
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.stat {
+  margin: 0;
+}
+
+.stat strong {
+  font-size: 1.15rem;
+  color: var(--color-ink);
+  margin: 0 0.15em;
+}
+
+/* ---------- 8. 任務清單（視覺層次的重點） ---------- */
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* 未完成任務：白底 + 左側主色條，最醒目 */
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 0.85rem var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-left: 5px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.task-item:hover {
+  border-color: #b3bdc9;
+  border-left-color: var(--color-primary-dark);
+}
+
+/* 已完成任務：灰底、灰色條、文字淡化加刪除線，視覺上退到後面 */
+.task-item.completed {
+  background: var(--color-done-bg);
+  border-left-color: var(--color-line);
+}
+
+.task-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.task-checkbox {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.task-title {
+  font-weight: 500;
+  overflow-wrap: anywhere;   /* 很長的任務名稱會自動換行，不會撐破版面 */
+}
+
+.task-item.completed .task-title {
+  font-weight: 400;
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
+/* 刪除按鈕：平常低調，滑過才顯示紅色，避免搶走任務本身的焦點 */
+.btn-delete {
+  flex-shrink: 0;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  border-color: transparent;
+  background: transparent;
+}
+
+.btn-delete:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: transparent;
+}
+
+.btn-delete:focus-visible {
+  outline-color: var(--color-danger);
+}
+
+/* ---------- 9. 工具類別 ---------- */
+/* 視覺隱藏但螢幕閱讀器可讀 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 使用者系統設定「減少動態效果」時，關閉過渡動畫 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   第 4 步：RWD 響應式設計
+   以下規則只在螢幕寬度 ≤ 480px（手機）時生效
+   ========================================================= */
+
+/* ---------- 10. 觸控裝置：按鈕加大到至少 44px，手指比較好點 ---------- */
+@media (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+  }
+
+  .task-checkbox {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+}
+
+/* ---------- 11. 手機版（≤ 480px） ---------- */
+@media (max-width: 480px) {
+  /* 縮小外圍留白，把空間留給內容 */
+  .app {
+    padding: var(--space-lg) 0.75rem;
+  }
+
+  .app-header {
+    margin-bottom: var(--space-md);
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .app-main {
+    gap: 0.75rem;
+  }
+
+  /* 新增區塊：輸入框與按鈕改成上下排列，按鈕變成整排寬 */
+  .task-form-section {
+    padding: 0.75rem;
+  }
+
+  .task-form {
+    flex-direction: column;
+  }
+
+  .btn-add {
+    width: 100%;
+  }
+
+  /* 篩選按鈕：撐滿整排並平均分配寬度 */
+  .filter-group {
+    display: flex;
+    width: 100%;
+  }
+
+  .btn-filter {
+    flex: 1;
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+  }
+
+  /* 統計文字稍微縮小，太窄時自動換行 */
+  .stats-section {
+    gap: var(--space-xs) var(--space-md);
+    font-size: 0.9rem;
+  }
+
+  .stat strong {
+    font-size: 1.05rem;
+  }
+
+  /* 任務項目：縮小內距，長標題時讓勾選框和刪除鈕對齊第一行 */
+  .task-item {
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: 0.75rem;
+  }
+
+  .task-label {
+    align-items: flex-start;
+  }
+
+  .task-checkbox {
+    margin-top: 0.2rem;
+  }
+
+  .btn-delete {
+    padding: 0.4rem 0.65rem;
+  }
+}
+
+/* =========================================================
+   第 6 步：新增任務的錯誤提示與空狀態
+   ========================================================= */
+ 
+/* 輸入框錯誤狀態：紅色邊框 */
+.task-input.has-error,
+.task-input.has-error:hover {
+  border-color: var(--color-danger);
+}
+ 
+.task-input.has-error:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px var(--color-danger-soft);
+}
+ 
+/* 錯誤訊息文字 */
+.form-error {
+  margin: var(--space-sm) 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+ 
+/* 沒有任務時的提示 */
+.empty-state {
+  margin: 0;
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 2px dashed var(--color-line);
+  border-radius: var(--radius-md);
+}
